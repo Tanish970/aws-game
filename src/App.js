@@ -1,80 +1,91 @@
-import React, { useState } from 'react';
-import './App.css';
+import React, { useState } from "react";
 
-function App() {
-  const [board, setBoard] = useState(Array(9).fill(null));
-  const [isXNext, setIsXNext] = useState(true);
+function StoryGenerator() {
+  const [character1, setCharacter1] = useState("");
+  const [character2, setCharacter2] = useState("");
+  const [story, setStory] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleClick = (index) => {
-    if (board[index] || calculateWinner(board)) return;
-    const newBoard = board.slice();
-    newBoard[index] = isXNext ? 'X' : 'O';
-    setBoard(newBoard);
-    setIsXNext(!isXNext);
-  };
+  const generateStory = async () => {
+    if (!character1 || !character2) {
+      alert("Please select both characters!");
+      return;
+    }
 
-  const winner = calculateWinner(board);
-  const status = winner
-    ? `Winner: ${winner}`
-    : `Next Player: ${isXNext ? 'X' : 'O'}`;
+    setLoading(true);
 
-  const renderSquare = (index) => (
-    <button className="square" onClick={() => handleClick(index)}>
-      {board[index]}
-    </button>
-  );
+    try {
+      // Call your backend to generate the story
+      const response = await fetch("http://localhost:3001/generate-story", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ character1, character2 }),
+      });
 
-  const restartGame = () => {
-    setBoard(Array(9).fill(null));
-    setIsXNext(true);
+      const data = await response.json();
+      setStory(data.story || "Story could not be generated!");
+    } catch (error) {
+      console.error("Error generating story:", error);
+      setStory("Error generating story. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="game">
-      <h1>Tic Tac Toe</h1>
-      <div className="status">{status}</div>
-      <div className="board">
-        <div className="row">
-          {renderSquare(0)}
-          {renderSquare(1)}
-          {renderSquare(2)}
-        </div>
-        <div className="row">
-          {renderSquare(3)}
-          {renderSquare(4)}
-          {renderSquare(5)}
-        </div>
-        <div className="row">
-          {renderSquare(6)}
-          {renderSquare(7)}
-          {renderSquare(8)}
-        </div>
+    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+      <h1>Story Generator</h1>
+      <div>
+        <label>
+          Select Character 1:
+          <select
+            value={character1}
+            onChange={(e) => setCharacter1(e.target.value)}
+            style={{ marginLeft: "10px", marginRight: "20px" }}
+          >
+            <option value="">--Choose--</option>
+            <option value="a brave knight">A Brave Knight</option>
+            <option value="a mischievous robot">A Mischievous Robot</option>
+            <option value="a clever cat">A Clever Cat</option>
+          </select>
+        </label>
+
+        <label>
+          Select Character 2:
+          <select
+            value={character2}
+            onChange={(e) => setCharacter2(e.target.value)}
+            style={{ marginLeft: "10px" }}
+          >
+            <option value="">--Choose--</option>
+            <option value="a wise owl">A Wise Owl</option>
+            <option value="a silly dog">A Silly Dog</option>
+            <option value="a curious alien">A Curious Alien</option>
+          </select>
+        </label>
       </div>
-      <button className="restart" onClick={restartGame}>
-        Restart Game
+
+      <button
+        onClick={generateStory}
+        style={{
+          marginTop: "20px",
+          padding: "10px 20px",
+          fontSize: "16px",
+          cursor: "pointer",
+        }}
+        disabled={loading}
+      >
+        {loading ? "Generating Story..." : "Generate Story"}
       </button>
+
+      {story && (
+        <div style={{ marginTop: "20px", padding: "10px", border: "1px solid #ccc" }}>
+          <h2>Generated Story:</h2>
+          <p>{story}</p>
+        </div>
+      )}
     </div>
   );
 }
 
-function calculateWinner(squares) {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-  for (let line of lines) {
-    const [a, b, c] = line;
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
-    }
-  }
-  return null;
-}
-
-export default App;
+export default StoryGenerator;
