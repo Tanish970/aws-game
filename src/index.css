@@ -1,13 +1,63 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.character-grid {
+  display: inline-flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 60px; /* Increased spacing between character cards */
+  margin: 30px 0;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.character-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding: 10px;
+  text-align: center;
+}
+
+.character-box .character-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 10px; /* Space between image and text */
+}
+
+.character-box:hover .character-image {
+  transform: scale(1.1); /* Slight enlargement on hover */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Soft shadow on hover */
+}
+
+.character-box .character-image.selected {
+  transform: scale(1.2); /* Enlarged size for selected */
+  border: 3px solid transparent;
+  border-radius: 50%; /* Ensures the border is circular */
+  border-image: linear-gradient(
+    to right,
+    red,
+    orange,
+    yellow,
+    green,
+    blue,
+    indigo,
+    violet
+  ); /* Rainbow border */
+  border-image-slice: 1;
+  box-sizing: border-box; /* Ensure proper sizing for the border */
+}
+
+
+.add-character-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  text-align: center;
+  margin: 0 auto; /* Center the box */
+  padding-top: 45px;
+  max-width: 200px; /* Restrict width for a neat look */
+}
+
+.add-character-box input {
+  text-align: center; /* Center the text in input fields */
 }

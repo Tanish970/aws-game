@@ -1,25 +1,53 @@
 import React, { useState } from "react";
+import { Button, Box, Typography, TextField, CircularProgress } from "@mui/material";
+import "./index.css";
 
 function StoryGenerator() {
   const [character1, setCharacter1] = useState("");
   const [character2, setCharacter2] = useState("");
+  const [customCharacter1, setCustomCharacter1] = useState("");
+  const [customCharacter2, setCustomCharacter2] = useState("");
+  const [characters, setCharacters] = useState([
+    { id: "knight", name: "A Brave Knight", img: "knight.webp" },
+    { id: "robot", name: "A Mischievous Robot", img: "robot.webp" },
+    { id: "cat", name: "A Clever Cat", img: "cat.webp" },
+    { id: "owl", name: "A Wise Owl", img: "owl.webp" },
+    { id: "dog", name: "A Silly Dog", img: "dog.webp" },
+    { id: "alien", name: "A Curious Alien", img: "alien.webp" },
+  ]);
   const [story, setStory] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const generateStory = async () => {
-    if (!character1 || !character2) {
-      alert("Please select both characters!");
+  const handleCharacterSelection = (charName, setCharacter, setCustomCharacter) => {
+    setCustomCharacter(""); // Clear any text input when an image is selected
+    setCharacter(charName);
+  };
+
+  const handleTextInputChange = (text, setCustomCharacter, setCharacter) => {
+    setCharacter(""); // Clear any image selection when text is entered
+    setCustomCharacter(text);
+  };
+
+  const fetchStory = async () => {
+    if (!character1 && !customCharacter1) {
+      alert("Please select or enter Character 1!");
+      return;
+    }
+    if (!character2 && !customCharacter2) {
+      alert("Please select or enter Character 2!");
       return;
     }
 
     setLoading(true);
 
     try {
-      // Call your backend to generate the story
       const response = await fetch("http://localhost:3001/generate-story", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ character1, character2 }),
+        body: JSON.stringify({
+          character1: customCharacter1 || character1,
+          character2: customCharacter2 || character2,
+        }),
       });
 
       const data = await response.json();
@@ -33,58 +61,118 @@ function StoryGenerator() {
   };
 
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-      <h1>Story Generator</h1>
-      <div>
-        <label>
+    <Box sx={{ padding: "20px", textAlign: "center", fontFamily: "Arial, sans-serif" }}>
+      <Typography variant="h3" gutterBottom>
+        Story Generator
+      </Typography>
+      <Box>
+        {/* Character 1 */}
+        <Typography variant="h5" gutterBottom>
           Select Character 1:
-          <select
-            value={character1}
-            onChange={(e) => setCharacter1(e.target.value)}
-            style={{ marginLeft: "10px", marginRight: "20px" }}
-          >
-            <option value="">--Choose--</option>
-            <option value="a brave knight">A Brave Knight</option>
-            <option value="a mischievous robot">A Mischievous Robot</option>
-            <option value="a clever cat">A Clever Cat</option>
-          </select>
-        </label>
+        </Typography>
+        <Box className="character-grid">
+          {characters.slice(0, 3).map((char) => (
+            <Box
+              key={char.id}
+              className="character-box"
+              onClick={() =>
+                handleCharacterSelection(char.name, setCharacter1, setCustomCharacter1)
+              }
+            >
+              <img
+                src={char.img}
+                alt={char.name}
+                className={`character-image ${character1 === char.name ? "selected" : ""}`}
+              />
+              <Typography>{char.name}</Typography>
+            </Box>
+          ))}
+          <Box className="add-character-box">
+            <TextField
+              label="Enter Character 1"
+              value={customCharacter1}
+              onChange={(e) =>
+                handleTextInputChange(e.target.value, setCustomCharacter1, setCharacter1)
+              }
+              size="small"
+              sx={{ marginBottom: "10px" }}
+            />
+          </Box>
+        </Box>
 
-        <label>
+        {/* Character 2 */}
+        <Typography variant="h5" gutterBottom>
           Select Character 2:
-          <select
-            value={character2}
-            onChange={(e) => setCharacter2(e.target.value)}
-            style={{ marginLeft: "10px" }}
-          >
-            <option value="">--Choose--</option>
-            <option value="a wise owl">A Wise Owl</option>
-            <option value="a silly dog">A Silly Dog</option>
-            <option value="a curious alien">A Curious Alien</option>
-          </select>
-        </label>
-      </div>
+        </Typography>
+        <Box className="character-grid">
+          {characters.slice(3).map((char) => (
+            <Box
+              key={char.id}
+              className="character-box"
+              onClick={() =>
+                handleCharacterSelection(char.name, setCharacter2, setCustomCharacter2)
+              }
+            >
+              <img
+                src={char.img}
+                alt={char.name}
+                className={`character-image ${character2 === char.name ? "selected" : ""}`}
+              />
+              <Typography>{char.name}</Typography>
+            </Box>
+          ))}
+          <Box className="add-character-box">
+            <TextField
+              label="Enter Character 2"
+              value={customCharacter2}
+              onChange={(e) =>
+                handleTextInputChange(e.target.value, setCustomCharacter2, setCharacter2)
+              }
+              size="small"
+              sx={{ marginBottom: "10px" }}
+            />
+          </Box>
+        </Box>
+      </Box>
 
-      <button
-        onClick={generateStory}
-        style={{
-          marginTop: "20px",
-          padding: "10px 20px",
-          fontSize: "16px",
-          cursor: "pointer",
-        }}
-        disabled={loading}
-      >
-        {loading ? "Generating Story..." : "Generate Story"}
-      </button>
+      <Box sx={{ display: "flex", justifyContent: "center", gap: "10px", marginTop: "20px" }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={fetchStory}
+          sx={{ padding: "10px 20px", fontSize: "16px" }}
+          disabled={loading}
+        >
+          {loading ? <CircularProgress size={24} /> : "Generate Story"}
+        </Button>
+        {story && (
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={fetchStory}
+            sx={{ padding: "10px 20px", fontSize: "16px" }}
+          >
+            Regenerate Story
+          </Button>
+        )}
+      </Box>
 
       {story && (
-        <div style={{ marginTop: "20px", padding: "10px", border: "1px solid #ccc" }}>
-          <h2>Generated Story:</h2>
-          <p>{story}</p>
-        </div>
+        <Box
+          sx={{
+            marginTop: "20px",
+            padding: "20px",
+            border: "1px solid #ccc",
+            borderRadius: "10px",
+          }}
+        >
+          <Typography variant="h5" gutterBottom>
+            Generated Story:
+          </Typography>
+          <Typography>{story}</Typography>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 }
 
