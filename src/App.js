@@ -8,12 +8,12 @@ function StoryGenerator() {
   const [customCharacter1, setCustomCharacter1] = useState("");
   const [customCharacter2, setCustomCharacter2] = useState("");
   const [characters, setCharacters] = useState([
-    { id: "knight", name: "A Brave Knight", img: "knight.webp" },
-    { id: "robot", name: "A Mischievous Robot", img: "robot.webp" },
-    { id: "cat", name: "A Clever Cat", img: "cat.webp" },
-    { id: "owl", name: "A Wise Owl", img: "owl.webp" },
-    { id: "dog", name: "A Silly Dog", img: "dog.webp" },
-    { id: "alien", name: "A Curious Alien", img: "alien.webp" },
+    { id: "knight", name: "A Brave Knight", img: "https://awsgamechallange.s3.us-east-1.amazonaws.com/knight.webp" },
+    { id: "robot", name: "A Mischievous Robot", img: "https://awsgamechallange.s3.us-east-1.amazonaws.com/robot.webp" },
+    { id: "cat", name: "A Clever Cat", img: "https://awsgamechallange.s3.us-east-1.amazonaws.com/cat.webp" },
+    { id: "owl", name: "A Wise Owl", img: "https://awsgamechallange.s3.us-east-1.amazonaws.com/owl.webp" },
+    { id: "dog", name: "A Silly Dog", img: "https://awsgamechallange.s3.us-east-1.amazonaws.com/dog.webp" },
+    { id: "alien", name: "A Curious Alien", img: "https://awsgamechallange.s3.us-east-1.amazonaws.com/alien.webp" },
   ]);
   const [story, setStory] = useState("");
   const [loading, setLoading] = useState(false);
