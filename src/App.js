@@ -37,11 +37,11 @@ function StoryGenerator() {
       alert("Please select or enter Character 2!");
       return;
     }
-
+  
     setLoading(true);
-
+  
     try {
-      const response = await fetch("http://localhost:3001/generate-story", {
+      const response = await fetch("https://u6pnx5qgf2.execute-api.us-east-1.amazonaws.com/Dev", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -49,9 +49,13 @@ function StoryGenerator() {
           character2: customCharacter2 || character2,
         }),
       });
-
+  
       const data = await response.json();
-      setStory(data.story || "Story could not be generated!");
+      console.log(data);
+  
+      // Parse the body field and extract the story
+      const parsedBody = JSON.parse(data.body);
+      setStory(parsedBody.story || "Story could not be generated!");
     } catch (error) {
       console.error("Error generating story:", error);
       setStory("Error generating story. Please try again.");
@@ -59,6 +63,8 @@ function StoryGenerator() {
       setLoading(false);
     }
   };
+  
+  
 
   return (
     <Box sx={{ padding: "20px", textAlign: "center", fontFamily: "Arial, sans-serif" }}>
